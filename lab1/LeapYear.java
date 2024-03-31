@@ -3,7 +3,9 @@
  */
 public class LeapYear {
 
-    /** Calls isLeapYear to print correct statement.
+    public static boolean isLeapYear(int year){
+        return ((year%4==0&&year%100!=0)||year%400==0);
+    }/** Calls isLeapYear to print correct statement.
      *  @param  year to be analyzed
      */
     private static void checkLeapYear(int year) {
