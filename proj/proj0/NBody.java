@@ -1,18 +1,23 @@
 public class NBody{
 	public static double readRadius(String filename_){
 		In in = new In(filename_);
-		int N=in.readInt();
+		int num=in.readInt();
 		double radius=in.readDouble();
 		return radius;
 	}
 	public static Planet[] readPlanets(String filename_){
 		In in = new In(filename_);
-		Planet[] ManyP = new Planet[5];
-		in.readLine();
-		in.readLine();
-		for(int i=0;i<5;i++){
-			ManyP[i]=new Planet(in.readDouble(),in.readDouble(),in.readDouble(),
-								in.readDouble(),in.readDouble(),in.readString());
+		int N=in.readInt();
+		Planet[] ManyP = new Planet[N];
+		double r=in.readDouble();
+		for(int i=0;i<N;i++){
+			double xp=in.readDouble();
+			double yp=in.readDouble();
+			double vx=in.readDouble();
+			double vy=in.readDouble();
+			double m=in.readDouble();
+			String img=in.readString();
+			ManyP[i]=new Planet(xp,yp,vx,vy,m,img);
 		}
 		return ManyP;
 	}
@@ -20,14 +25,14 @@ public class NBody{
 		double T = Double.parseDouble(args[0]);
 		double dt = Double.parseDouble(args[1]);
 		String filename = args[2];
-		Planet[] Manyplanet = NBody.readPlanets(filename);
-		int num=Manyplanet.length;
+		Planet[] planets = NBody.readPlanets(filename);
+		int num=planets.length;
 
 		double r=readRadius(filename);
 		StdDraw.setScale(-r,r);
 		StdDraw.picture(0,0,"images/starfield.jpg");
 		for(int i=0;i<num;i++){
-			Manyplanet[i].draw();
+			planets[i].draw();
 		}
 
 		StdDraw.enableDoubleBuffering();
@@ -39,32 +44,27 @@ public class NBody{
 			for(int i=0;i<num;i++){
 				//xForces[i]=0;
 				//yForces[i]=0;
-				for(int j=0;j<num;j++){
-					if(j==i) continue;
-					else{
-						xForces[i]+=Manyplanet[i].calcForceExertedByX(Manyplanet[j]);
-						yForces[i]+=Manyplanet[i].calcForceExertedByY(Manyplanet[j]);
-					}
-				}
+				xForces[i]=planets[i].calcNetForceExertedByX(planets);
+				yForces[i]=planets[i].calcNetForceExertedByY(planets);
 			}
 			for(int i=0;i<num;i++){
-				Manyplanet[i].update(dt,xForces[i],yForces[i]);
+				planets[i].update(dt,xForces[i],yForces[i]);
 			}
 			StdDraw.picture(0,0,"images/starfield.jpg");
 			for(int i=0;i<num;i++){
-				Manyplanet[i].draw();
+				planets[i].draw();
 			}
 			StdDraw.show();
 			StdDraw.pause(10);
 		}
 
 
-		StdOut.printf("%d\n",Manyplanet.length);
-		StdOut.printf("%.2e\n",r);
-		for(int i=0;i<num;i++){
-			StdOut.printf("%11.4e %11.4e %11.4e %11.4e %12s\n",
-			Manyplanet[i].xxPos,Manyplanet[i].yyPos,Manyplanet[i].xxVel,
-			Manyplanet[i].yyVel,Manyplanet[i].mass,Manyplanet[i].imgFileName);
+		StdOut.printf("%d\n", planets.length);
+		StdOut.printf("%.2e\n", r);
+		for (int i = 0; i < planets.length; i++) {
+    		StdOut.printf("%11.4e %11.4e %11.4e %11.4e %11.4e %12s\n",
+                  planets[i].xxPos, planets[i].yyPos, planets[i].xxVel,
+                  planets[i].yyVel, planets[i].mass, planets[i].imgFileName);   
 		}
 	}
 }
